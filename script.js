@@ -180,7 +180,7 @@ function checkStreak() {
 }
 
 // ============================================
-// 5. GAME CARD CLICK
+// 5. GAME CARD CLICK → route to game
 // ============================================
 gameCards.forEach(card => {
   card.addEventListener('click', () => {
@@ -190,16 +190,25 @@ gameCards.forEach(card => {
 });
 
 function openGame(gameId) {
-  // Placeholder — later will route to game files
-  const gameNames = {
-    math:    '🎯 Math Blitz',
-    memory:  '🧩 Memory Match',
-    word:    '🔤 Word Builder',
-    pattern: '🎨 Pattern Puzzle'
+  const routes = {
+    math:    'games/math/math.html',
+    memory:  'games/memory/memory.html',
+    word:    'games/word/word.html',
+    pattern: 'games/pattern/pattern.html'
   };
 
-  // Simple feedback (replace later with real routing)
-  showToast(`${gameNames[gameId]} coming soon!`);
+  const path = routes[gameId];
+  if (!path) {
+    showToast('Game not found');
+    return;
+  }
+
+  // Check if file exists (only math ready now)
+  if (gameId === 'math') {
+    window.location.href = path;
+  } else {
+    showToast('🚧 Coming soon!');
+  }
 }
 
 // ============================================
