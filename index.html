@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#6a11cb">
+  <meta name="description" content="Math Blitz - Unlimited Brain Challenge Game">
+  <title>Math Blitz - Brain Challenge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen active">
+    <div class="logo">🧠</div>
+    <h1 class="title">Math Blitz</h1>
+    <p class="subtitle">Unlimited Brain Challenge</p>
+    <button id="startBtn" class="btn-primary">▶ START GAME</button>
+    <div class="best-score-box">
+      <span>🏆 Best Score</span>
+      <strong id="bestScoreStart">0</strong>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="stat-box">
+        <span class="stat-label">LEVEL</span>
+        <span class="stat-value" id="levelDisplay">1</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">SCORE</span>
+        <span class="stat-value" id="scoreDisplay">0</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">TIME</span>
+        <span class="stat-value" id="timerDisplay">60</span>
+      </div>
+    </div>
+
+    <!-- Timer Progress Bar -->
+    <div class="timer-bar-wrap">
+      <div id="timerBar" class="timer-bar"></div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-card">
+      <div id="questionText" class="question-text">2 + 2 = ?</div>
+    </div>
+
+    <!-- Answer Options -->
+    <div class="options-grid" id="optionsGrid">
+      <button class="option-btn" data-index="0">4</button>
+      <button class="option-btn" data-index="1">5</button>
+      <button class="option-btn" data-index="2">3</button>
+      <button class="option-btn" data-index="3">6</button>
+    </div>
+
+    <!-- Streak Indicator -->
+    <div class="streak-box">
+      <span id="streakText">🔥 Streak: 0</span>
+    </div>
+
+  </div>
+
+  <!-- ===== GAME OVER SCREEN ===== -->
+  <div id="gameOverScreen" class="screen">
+    <div class="gameover-icon">⏰</div>
+    <h2 class="gameover-title">Time's Up!</h2>
+
+    <div class="result-box">
+      <div class="result-item">
+        <span>Score</span>
+        <strong id="finalScore">0</strong>
+      </div>
+      <div class="result-item">
+        <span>Level Reached</span>
+        <strong id="finalLevel">1</strong>
+      </div>
+      <div class="result-item">
+        <span>Best Score</span>
+        <strong id="finalBest">0</strong>
+      </div>
+    </div>
+
+    <div id="newRecordBadge" class="new-record hidden">🎉 NEW RECORD! 🎉</div>
+
+    <button id="restartBtn" class="btn-primary">🔄 PLAY AGAIN</button>
+    <button id="homeBtn" class="btn-secondary">🏠 HOME</button>
+  </div>
+
+  <!-- ===== FEEDBACK POPUP ===== -->
+  <div id="feedback" class="feedback hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
