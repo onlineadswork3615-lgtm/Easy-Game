@@ -1,349 +1,283 @@
 /* ============================================
-   MATH BLITZ - GAME LOGIC
+   BRAIN BLITZ - MAIN APP LOGIC
    ============================================ */
 
-// ---------- DOM ELEMENTS ----------
-const startScreen     = document.getElementById('startScreen');
-const gameScreen      = document.getElementById('gameScreen');
-const gameOverScreen  = document.getElementById('gameOverScreen');
+// ---------- SCREEN ELEMENTS ----------
+const splashScreen    = document.getElementById('splashScreen');
+const loginScreen     = document.getElementById('loginScreen');
+const loadingScreen   = document.getElementById('loadingScreen');
+const dashboardScreen = document.getElementById('dashboardScreen');
 
-const startBtn        = document.getElementById('startBtn');
-const restartBtn      = document.getElementById('restartBtn');
-const homeBtn         = document.getElementById('homeBtn');
+// ---------- LOGIN ELEMENTS ----------
+const nameInput  = document.getElementById('nameInput');
+const avatarGrid = document.getElementById('avatarGrid');
+const loginBtn   = document.getElementById('loginBtn');
 
-const levelDisplay    = document.getElementById('levelDisplay');
-const scoreDisplay    = document.getElementById('scoreDisplay');
-const timerDisplay    = document.getElementById('timerDisplay');
-const timerBar        = document.getElementById('timerBar');
-const questionText    = document.getElementById('questionText');
-const optionsGrid     = document.getElementById('optionsGrid');
-const streakText      = document.getElementById('streakText');
-const feedback        = document.getElementById('feedback');
+// ---------- LOADING ELEMENTS ----------
+const loadingBar     = document.getElementById('loadingBar');
+const loadingPercent = document.getElementById('loadingPercent');
 
-const bestScoreStart  = document.getElementById('bestScoreStart');
-const finalScore      = document.getElementById('finalScore');
-const finalLevel      = document.getElementById('finalLevel');
-const finalBest       = document.getElementById('finalBest');
-const newRecordBadge  = document.getElementById('newRecordBadge');
+// ---------- DASHBOARD ELEMENTS ----------
+const userAvatar   = document.getElementById('userAvatar');
+const userName     = document.getElementById('userName');
+const brainScore   = document.getElementById('brainScore');
+const streakDays   = document.getElementById('streakDays');
+const dailyBtn     = document.getElementById('dailyBtn');
+const settingsBtn  = document.getElementById('settingsBtn');
+const gameCards    = document.querySelectorAll('.game-card');
 
-// ---------- GAME STATE ----------
-let score        = 0;
-let level        = 1;
-let streak       = 0;
-let correctAnswer = 0;
-let totalTime    = 60;
-let timeLeft     = 60;
-let gameActive   = false;
-let timerInterval = null;
-let levelUpPending = false;
-
-// Best score localStorage থেকে load
-let bestScore = parseInt(localStorage.getItem('mathBlitzBest') || '0');
-bestScoreStart.textContent = bestScore;
+// ---------- STATE ----------
+let userData = {
+  name: 'Player',
+  avatar: '🦁',
+  brainScore: 0,
+  streak: 1,
+  lastPlayed: null
+};
 
 // ---------- SCREEN SWITCHER ----------
 function showScreen(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
+  // Scroll top
+  screen.scrollTop = 0;
 }
 
-// ---------- RANDOM HELPERS ----------
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// ============================================
+// 1. SPLASH → LOGIN
+// ============================================
+window.addEventListener('load', () => {
+  // Check if user already exists
+  const saved = localStorage.getItem('brainBlitzUser');
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-// ---------- QUESTION GENERATOR (UNLIMITED LEVELS) ----------
-function generateQuestion() {
-  let a, b, op, answer;
-
-  // Level অনুযায়ী difficulty বাড়বে
-  if (level <= 3) {
-    // খুব সহজ: যোগ-বিয়োগ, 1-10
-    a = randInt(1, 10);
-    b = randInt(1, 10);
-    op = Math.random() < 0.5 ? '+' : '-';
-    if (op === '-' && b > a) [a, b] = [b, a]; // negative এড়াতে
-    answer = op === '+' ? a + b : a - b;
-
-  } else if (level <= 7) {
-    // সহজ: 1-20
-    a = randInt(1, 20);
-    b = randInt(1, 20);
-    op = Math.random() < 0.5 ? '+' : '-';
-    if (op === '-' && b > a) [a, b] = [b, a];
-    answer = op === '+' ? a + b : a - b;
-
-  } else if (level <= 12) {
-    // মাঝারি: গুণ যোগ
-    const type = randInt(0, 2);
-    if (type === 0) {
-      a = randInt(2, 12); b = randInt(2, 12);
-      op = '×'; answer = a * b;
-    } else if (type === 1) {
-      a = randInt(10, 50); b = randInt(10, 50);
-      op = '+'; answer = a + b;
-    } else {
-      a = randInt(20, 99); b = randInt(1, 20);
-      op = '-'; answer = a - b;
-    }
-
-  } else if (level <= 20) {
-    // কঠিন: সব অপারেশন
-    const type = randInt(0, 3);
-    if (type === 0) {
-      a = randInt(2, 15); b = randInt(2, 15);
-      op = '×'; answer = a * b;
-    } else if (type === 1) {
-      b = randInt(2, 12);
-      answer = randInt(2, 12);
-      a = b * answer;
-      op = '÷';
-    } else if (type === 2) {
-      a = randInt(50, 200); b = randInt(50, 200);
-      op = '+'; answer = a + b;
-    } else {
-      a = randInt(50, 200); b = randInt(1, 50);
-      op = '-'; answer = a - b;
-    }
-
+  if (saved) {
+    userData = JSON.parse(saved);
+    // Splash দিয়ে সরাসরি loading → dashboard
+    setTimeout(() => {
+      showScreen(loadingScreen);
+      runLoadingAnimation(() => {
+        loadDashboard();
+        showScreen(dashboardScreen);
+      });
+    }, 2600);
   } else {
-    // Expert: multi-step
-    const type = randInt(0, 2);
-    if (type === 0) {
-      a = randInt(5, 20); b = randInt(2, 10);
-      const c = randInt(1, 30);
-      op = '×+';
-      answer = a * b + c;
-      questionText.dataset.custom = `${a} × ${b} + ${c} = ?`;
-    } else if (type === 1) {
-      a = randInt(20, 100); b = randInt(2, 9);
-      op = '÷';
-      answer = randInt(2, 12);
-      a = b * answer;
-    } else {
-      a = randInt(100, 500); b = randInt(50, 200);
-      op = '-'; answer = a - b;
-    }
+    // নতুন user → login
+    setTimeout(() => {
+      showScreen(loginScreen);
+    }, 2600);
   }
+});
 
-  correctAnswer = answer;
+// ============================================
+// 2. LOGIN LOGIC
+// ============================================
 
-  // Custom multi-step question
-  if (questionText.dataset.custom) {
-    const q = questionText.dataset.custom;
-    delete questionText.dataset.custom;
-    return q;
-  }
+// Name input validation
+nameInput.addEventListener('input', () => {
+  const hasName   = nameInput.value.trim().length >= 2;
+  const hasAvatar = avatarGrid.querySelector('.avatar-btn.selected') !== null;
+  loginBtn.disabled = !(hasName && hasAvatar);
+});
 
-  return `${a} ${op} ${b} = ?`;
-}
-
-// ---------- WRONG ANSWER GENERATOR ----------
-function generateOptions(correct) {
-  const opts = new Set();
-  opts.add(correct);
-
-  while (opts.size < 4) {
-    let offset = randInt(1, 10);
-    if (Math.random() < 0.5) offset = -offset;
-    let wrong = correct + offset;
-
-    // কখনো negative বা duplicate হবে না
-    if (wrong >= 0 && wrong !== correct) {
-      opts.add(wrong);
-    }
-  }
-
-  return shuffle([...opts]);
-}
-
-// ---------- RENDER QUESTION ----------
-function renderQuestion() {
-  const question = generateQuestion();
-  questionText.textContent = question;
-
-  const options = generateOptions(correctAnswer);
-
-  optionsGrid.querySelectorAll('.option-btn').forEach((btn, i) => {
-    btn.textContent = options[i];
-    btn.dataset.value = options[i];
-    btn.classList.remove('correct', 'wrong');
-  });
-}
-
-// ---------- OPTION CLICK HANDLER ----------
-optionsGrid.querySelectorAll('.option-btn').forEach(btn => {
+// Avatar select
+avatarGrid.querySelectorAll('.avatar-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    if (!gameActive) return;
-    if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+    avatarGrid.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
 
-    const selected = parseInt(btn.dataset.value);
-
-    if (selected === correctAnswer) {
-      handleCorrect(btn);
-    } else {
-      handleWrong(btn);
-    }
+    // Validate
+    const hasName   = nameInput.value.trim().length >= 2;
+    loginBtn.disabled = !hasName;
   });
 });
 
-// ---------- CORRECT ANSWER ----------
-function handleCorrect(btn) {
-  btn.classList.add('correct');
-  streak++;
+// Login button
+loginBtn.addEventListener('click', () => {
+  const name   = nameInput.value.trim();
+  const avatar = avatarGrid.querySelector('.avatar-btn.selected')?.dataset.avatar;
 
-  // Score calculation: streak bonus
-  const basePoints = 10 + level;
-  const streakBonus = Math.min(streak, 10) * 2;
-  const points = basePoints + streakBonus;
-  score += points;
+  if (!name || !avatar) return;
 
-  scoreDisplay.textContent = score;
-  streakText.textContent = `🔥 Streak: ${streak}`;
-  showFeedback('✅', '#00f260');
+  userData = {
+    name: name,
+    avatar: avatar,
+    brainScore: 0,
+    streak: 1,
+    lastPlayed: new Date().toDateString()
+  };
 
-  // প্রতি ৫টা সঠিক উত্তরে level up
-  if (streak % 5 === 0) {
-    level++;
-    levelDisplay.textContent = level;
-    showFeedback('⭐ LEVEL UP!', '#ffe259');
-    // Time bonus
-    timeLeft = Math.min(timeLeft + 3, totalTime);
-  }
+  localStorage.setItem('brainBlitzUser', JSON.stringify(userData));
 
-  // পরের প্রশ্ন (300ms delay)
-  setTimeout(() => {
-    if (gameActive) renderQuestion();
-  }, 300);
-}
-
-// ---------- WRONG ANSWER ----------
-function handleWrong(btn) {
-  btn.classList.add('wrong');
-  streak = 0;
-  streakText.textContent = `🔥 Streak: 0`;
-
-  // সঠিক উত্তর highlight
-  optionsGrid.querySelectorAll('.option-btn').forEach(b => {
-    if (parseInt(b.dataset.value) === correctAnswer) {
-      b.classList.add('correct');
-    }
+  showScreen(loadingScreen);
+  runLoadingAnimation(() => {
+    loadDashboard();
+    showScreen(dashboardScreen);
   });
+});
 
-  // 2 সেকেন্ড time penalty
-  timeLeft = Math.max(0, timeLeft - 2);
-  showFeedback('❌', '#ff5e62');
+// ============================================
+// 3. LOADING ANIMATION
+// ============================================
+function runLoadingAnimation(callback) {
+  let progress = 0;
+  loadingBar.style.width = '0%';
+  loadingPercent.textContent = '0%';
 
-  setTimeout(() => {
-    if (gameActive) renderQuestion();
-  }, 700);
-}
-
-// ---------- FEEDBACK POPUP ----------
-function showFeedback(text, color) {
-  feedback.textContent = text;
-  feedback.style.color = color;
-  feedback.classList.remove('hidden');
-  // Reset animation
-  feedback.style.animation = 'none';
-  void feedback.offsetWidth;
-  feedback.style.animation = 'feedbackPop 0.8s ease-out forwards';
-
-  setTimeout(() => feedback.classList.add('hidden'), 800);
-}
-
-// ---------- TIMER ----------
-function startTimer() {
-  timerInterval = setInterval(() => {
-    timeLeft -= 0.1;
-    if (timeLeft < 0) timeLeft = 0;
-
-    timerDisplay.textContent = Math.ceil(timeLeft);
-    const percent = (timeLeft / totalTime) * 100;
-    timerBar.style.width = percent + '%';
-
-    if (percent < 30) {
-      timerBar.classList.add('warning');
-    } else {
-      timerBar.classList.remove('warning');
+  const interval = setInterval(() => {
+    progress += Math.random() * 8 + 3;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      setTimeout(callback, 400);
     }
-
-    if (timeLeft <= 0) {
-      endGame();
-    }
-  }, 100);
+    loadingBar.style.width = progress + '%';
+    loadingPercent.textContent = Math.floor(progress) + '%';
+  }, 120);
 }
 
-// ---------- START GAME ----------
-function startGame() {
-  score = 0;
-  level = 1;
-  streak = 0;
-  timeLeft = totalTime;
-  gameActive = true;
+// ============================================
+// 4. DASHBOARD LOADER
+// ============================================
+function loadDashboard() {
+  userAvatar.textContent = userData.avatar || '🦁';
+  userName.textContent   = userData.name || 'Player';
+  brainScore.textContent = formatNumber(userData.brainScore || 0);
+  streakDays.textContent = userData.streak || 1;
 
-  scoreDisplay.textContent = '0';
-  levelDisplay.textContent = '1';
-  timerDisplay.textContent = totalTime;
-  timerBar.style.width = '100%';
-  timerBar.classList.remove('warning');
-  streakText.textContent = '🔥 Streak: 0';
-
-  showScreen(gameScreen);
-  renderQuestion();
-  startTimer();
+  // Check streak
+  checkStreak();
 }
 
-// ---------- END GAME ----------
-function endGame() {
-  gameActive = false;
-  clearInterval(timerInterval);
+// ---------- NUMBER FORMAT (1000 → 1,000) ----------
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
-  finalScore.textContent = score;
-  finalLevel.textContent = level;
-  finalBest.textContent = bestScore;
+// ---------- STREAK LOGIC ----------
+function checkStreak() {
+  const today = new Date().toDateString();
+  const last  = userData.lastPlayed;
 
-  // New record check
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('mathBlitzBest', bestScore);
-    bestScoreStart.textContent = bestScore;
-    finalBest.textContent = bestScore;
-    newRecordBadge.classList.remove('hidden');
+  if (!last) {
+    userData.streak = 1;
+  } else if (last === today) {
+    // Same day, no change
   } else {
-    newRecordBadge.classList.add('hidden');
+    const lastDate = new Date(last);
+    const todayDate = new Date(today);
+    const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      userData.streak = (userData.streak || 0) + 1;
+    } else if (diffDays > 1) {
+      userData.streak = 1;
+    }
   }
 
-  showScreen(gameOverScreen);
+  userData.lastPlayed = today;
+  localStorage.setItem('brainBlitzUser', JSON.stringify(userData));
+  streakDays.textContent = userData.streak;
 }
 
-// ---------- EVENT LISTENERS ----------
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
-homeBtn.addEventListener('click', () => {
-  bestScoreStart.textContent = bestScore;
-  showScreen(startScreen);
+// ============================================
+// 5. GAME CARD CLICK
+// ============================================
+gameCards.forEach(card => {
+  card.addEventListener('click', () => {
+    const game = card.dataset.game;
+    openGame(game);
+  });
 });
 
-// ---------- KEYBOARD SUPPORT (desktop) ----------
-document.addEventListener('keydown', (e) => {
-  if (!gameActive) return;
-  const num = parseInt(e.key);
-  if (num >= 1 && num <= 4) {
-    const btns = optionsGrid.querySelectorAll('.option-btn');
-    if (btns[num - 1]) btns[num - 1].click();
-  }
+function openGame(gameId) {
+  // Placeholder — later will route to game files
+  const gameNames = {
+    math:    '🎯 Math Blitz',
+    memory:  '🧩 Memory Match',
+    word:    '🔤 Word Builder',
+    pattern: '🎨 Pattern Puzzle'
+  };
+
+  // Simple feedback (replace later with real routing)
+  showToast(`${gameNames[gameId]} coming soon!`);
+}
+
+// ============================================
+// 6. DAILY CHALLENGE
+// ============================================
+dailyBtn.addEventListener('click', () => {
+  showToast('🎯 Daily Challenge starting...');
 });
 
-// ---------- PREVENT ZOOM ON DOUBLE TAP ----------
+// ============================================
+// 7. SETTINGS
+// ============================================
+settingsBtn.addEventListener('click', () => {
+  showToast('⚙️ Settings coming soon');
+});
+
+// ============================================
+// 8. TOAST NOTIFICATION
+// ============================================
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: linear-gradient(135deg, #ffe259, #ffa751);
+    color: #6a11cb;
+    padding: 14px 26px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(255,226,89,0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  `;
+
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 1800);
+}
+
+// ============================================
+// 9. BOTTOM NAV (placeholder)
+// ============================================
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const tab = btn.dataset.tab;
+    if (tab === 'home') {
+      // already home
+    } else if (tab === 'stats') {
+      showToast('📊 Stats coming soon');
+    } else if (tab === 'profile') {
+      showToast('👤 Profile coming soon');
+    }
+  });
+});
+
+// ============================================
+// 10. PREVENT ZOOM ON DOUBLE TAP
+// ============================================
 let lastTouch = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
