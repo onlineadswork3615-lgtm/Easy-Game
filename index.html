@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#6a11cb">
   <title>Brain Blitz</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -64,6 +65,7 @@
   <!-- ==================== DASHBOARD SCREEN ==================== -->
   <div id="dashboardScreen" class="screen">
 
+    <!-- Top Header -->
     <div class="dash-header">
       <div class="user-info">
         <div class="user-avatar" id="userAvatar">🦁</div>
@@ -75,6 +77,7 @@
       <button class="settings-btn" id="settingsBtn">⚙️</button>
     </div>
 
+    <!-- Brain Score Card -->
     <div class="brain-score-card">
       <div class="brain-score-icon">🧠</div>
       <div class="brain-score-info">
@@ -87,6 +90,7 @@
       </div>
     </div>
 
+    <!-- Daily Challenge -->
     <div class="daily-challenge">
       <div class="dc-left">
         <p class="dc-title">🎯 Daily Challenge</p>
@@ -95,35 +99,119 @@
       <button class="dc-btn" id="dailyBtn">PLAY</button>
     </div>
 
-    <p class="section-title">GAMES</p>
-    <div class="games-grid">
+    <!-- Search -->
+    <div class="search-wrap">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search games...">
+    </div>
 
-      <button class="game-card" data-game="math">
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="cat-tab active" data-cat="all">All</button>
+      <button class="cat-tab" data-cat="brain">Brain</button>
+      <button class="cat-tab" data-cat="math">Math</button>
+      <button class="cat-tab" data-cat="memory">Memory</button>
+      <button class="cat-tab" data-cat="word">Word</button>
+      <button class="cat-tab" data-cat="kids">Kids</button>
+    </div>
+
+    <!-- Games Section -->
+    <p class="section-title">ALL GAMES <span id="gameCount">(15)</span></p>
+
+    <div class="games-grid" id="gamesGrid">
+
+      <button class="game-card" data-game="math" data-cat="math brain" data-name="Math Blitz">
         <div class="game-icon">🎯</div>
         <p class="game-name">Math Blitz</p>
         <p class="game-desc">Unlimited math</p>
       </button>
 
-      <button class="game-card" data-game="memory">
+      <button class="game-card" data-game="memory" data-cat="memory brain" data-name="Memory Match">
         <div class="game-icon">🧩</div>
         <p class="game-name">Memory Match</p>
         <p class="game-desc">Find pairs</p>
       </button>
 
-      <button class="game-card" data-game="word">
+      <button class="game-card" data-game="word" data-cat="word kids" data-name="Word Builder">
         <div class="game-icon">🔤</div>
         <p class="game-name">Word Builder</p>
         <p class="game-desc">English words</p>
       </button>
 
-      <button class="game-card" data-game="pattern">
+      <button class="game-card" data-game="pattern" data-cat="brain" data-name="Pattern Puzzle">
         <div class="game-icon">🎨</div>
         <p class="game-name">Pattern Puzzle</p>
         <p class="game-desc">Find the pattern</p>
       </button>
 
+      <button class="game-card" data-game="sequence" data-cat="math brain" data-name="Number Sequence">
+        <div class="game-icon">🔢</div>
+        <p class="game-name">Number Sequence</p>
+        <p class="game-desc">What's next?</p>
+      </button>
+
+      <button class="game-card" data-game="logic" data-cat="brain" data-name="Logic Puzzle">
+        <div class="game-icon">🧠</div>
+        <p class="game-name">Logic Puzzle</p>
+        <p class="game-desc">Think carefully</p>
+      </button>
+
+      <button class="game-card" data-game="reaction" data-cat="brain" data-name="Reaction Test">
+        <div class="game-icon">⚡</div>
+        <p class="game-name">Reaction Test</p>
+        <p class="game-desc">Speed test</p>
+      </button>
+
+      <button class="game-card" data-game="color" data-cat="memory kids" data-name="Color Match">
+        <div class="game-icon">🌈</div>
+        <p class="game-name">Color Match</p>
+        <p class="game-desc">Match colors</p>
+      </button>
+
+      <button class="game-card" data-game="animal" data-cat="kids word" data-name="Animal Quiz">
+        <div class="game-icon">🐾</div>
+        <p class="game-name">Animal Quiz</p>
+        <p class="game-desc">Guess animals</p>
+      </button>
+
+      <button class="game-card" data-game="spelling" data-cat="word kids" data-name="Spelling Bee">
+        <div class="game-icon">📝</div>
+        <p class="game-name">Spelling Bee</p>
+        <p class="game-desc">Spell words</p>
+      </button>
+
+      <button class="game-card" data-game="quickmath" data-cat="math" data-name="Quick Math">
+        <div class="game-icon">🧮</div>
+        <p class="game-name">Quick Math</p>
+        <p class="game-desc">Fast equations</p>
+      </button>
+
+      <button class="game-card" data-game="sudoku" data-cat="brain math" data-name="Mini Sudoku">
+        <div class="game-icon">🎲</div>
+        <p class="game-name">Mini Sudoku</p>
+        <p class="game-desc">Number puzzle</p>
+      </button>
+
+      <button class="game-card" data-game="maze" data-cat="brain kids" data-name="Maze Runner">
+        <div class="game-icon">🧭</div>
+        <p class="game-name">Maze Runner</p>
+        <p class="game-desc">Find the path</p>
+      </button>
+
+      <button class="game-card" data-game="difference" data-cat="memory kids" data-name="Find Difference">
+        <div class="game-icon">🔍</div>
+        <p class="game-name">Find Difference</p>
+        <p class="game-desc">Spot the change</p>
+      </button>
+
+      <button class="game-card" data-game="sound" data-cat="memory kids" data-name="Sound Match">
+        <div class="game-icon">🎵</div>
+        <p class="game-name">Sound Match</p>
+        <p class="game-desc">Match sounds</p>
+      </button>
+
     </div>
 
+    <!-- Bottom Nav -->
     <div class="bottom-nav">
       <button class="nav-btn active" data-tab="home">
         <span>🏠</span>
