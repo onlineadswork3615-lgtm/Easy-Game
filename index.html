@@ -211,6 +211,12 @@
 
     </div>
 
+    <!-- Empty state (when no search results) -->
+    <div id="emptyState" class="empty-state hidden">
+      <p>😕 No games found</p>
+      <p class="empty-sub">Try another search</p>
+    </div>
+
     <!-- Bottom Nav -->
     <div class="bottom-nav">
       <button class="nav-btn active" data-tab="home">
@@ -228,6 +234,148 @@
     </div>
 
   </div>
+
+  <!-- ==================== STATS SCREEN ==================== -->
+  <div id="statsScreen" class="screen">
+    <div class="sub-header">
+      <button class="back-btn" id="statsBackBtn">←</button>
+      <h2>📊 Statistics</h2>
+      <div class="header-spacer"></div>
+    </div>
+
+    <div class="stats-content">
+      <div class="stat-card">
+        <p class="stat-card-label">TOTAL GAMES PLAYED</p>
+        <p class="stat-card-value" id="totalGamesPlayed">0</p>
+      </div>
+
+      <div class="stat-card">
+        <p class="stat-card-label">TOTAL BRAIN SCORE</p>
+        <p class="stat-card-value" id="totalBrainScore">0</p>
+      </div>
+
+      <div class="stat-card">
+        <p class="stat-card-label">CURRENT STREAK</p>
+        <p class="stat-card-value" id="totalStreak">1 <span>days 🔥</span></p>
+      </div>
+
+      <p class="section-title">BEST SCORES</p>
+      <div class="stats-list" id="statsList"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE SCREEN ==================== -->
+  <div id="profileScreen" class="screen">
+    <div class="sub-header">
+      <button class="back-btn" id="profileBackBtn">←</button>
+      <h2>👤 Profile</h2>
+      <div class="header-spacer"></div>
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-avatar-big" id="profileAvatarBig">🦁</div>
+      <h2 class="profile-name" id="profileName">Player</h2>
+      <p class="profile-joined" id="profileJoined">Joined today</p>
+
+      <div class="profile-stats">
+        <div class="profile-stat-box">
+          <p class="psb-value" id="profileBrainScore">0</p>
+          <p class="psb-label">Brain Score</p>
+        </div>
+        <div class="profile-stat-box">
+          <p class="psb-value" id="profileStreak">1</p>
+          <p class="psb-label">Day Streak</p>
+        </div>
+        <div class="profile-stat-box">
+          <p class="psb-value" id="profileGames">0</p>
+          <p class="psb-label">Games</p>
+        </div>
+      </div>
+
+      <button class="profile-action-btn" id="changeAvatarBtn">🎨 Change Avatar</button>
+      <button class="profile-action-btn" id="changeNameBtn">✏️ Change Name</button>
+      <button class="profile-action-btn danger" id="resetBtn">🗑️ Reset All Data</button>
+    </div>
+  </div>
+
+  <!-- ==================== CHANGE AVATAR MODAL ==================== -->
+  <div id="avatarModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Choose Avatar</h3>
+      <div class="avatar-grid modal-avatar-grid" id="modalAvatarGrid">
+        <button class="avatar-btn" data-avatar="🦁">🦁</button>
+        <button class="avatar-btn" data-avatar="🐯">🐯</button>
+        <button class="avatar-btn" data-avatar="🐼">🐼</button>
+        <button class="avatar-btn" data-avatar="🦊">🦊</button>
+        <button class="avatar-btn" data-avatar="🐸">🐸</button>
+        <button class="avatar-btn" data-avatar="🦉">🦉</button>
+        <button class="avatar-btn" data-avatar="🐨">🐨</button>
+        <button class="avatar-btn" data-avatar="🐧">🐧</button>
+        <button class="avatar-btn" data-avatar="🐻">🐻</button>
+        <button class="avatar-btn" data-avatar="🐮">🐮</button>
+        <button class="avatar-btn" data-avatar="🐷">🐷</button>
+        <button class="avatar-btn" data-avatar="🐵">🐵</button>
+        <button class="avatar-btn" data-avatar="🐺">🐺</button>
+        <button class="avatar-btn" data-avatar="🦄">🦄</button>
+        <button class="avatar-btn" data-avatar="🐉">🐉</button>
+        <button class="avatar-btn" data-avatar="🦖">🦖</button>
+      </div>
+      <button class="modal-close-btn" id="avatarModalClose">Close</button>
+    </div>
+  </div>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>⚙️ Settings</h3>
+
+      <div class="setting-row">
+        <span>🔊 Sound Effects</span>
+        <label class="switch">
+          <input type="checkbox" id="soundToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span>📳 Vibration</span>
+        <label class="switch">
+          <input type="checkbox" id="vibrateToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span>🌙 Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox" id="darkToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <p class="settings-about">
+        Brain Blitz v1.0<br>
+        Made with ❤️
+      </p>
+
+      <button class="modal-close-btn" id="settingsModalClose">Close</button>
+    </div>
+  </div>
+
+  <!-- ==================== GAME LAUNCH OVERLAY ==================== -->
+  <div id="gameLaunchOverlay" class="game-launch-overlay hidden">
+    <div class="launch-content">
+      <div class="launch-icon" id="launchIcon">🎯</div>
+      <h2 class="launch-title" id="launchTitle">Math Blitz</h2>
+      <p class="launch-sub">Starting game...</p>
+      <div class="launch-loader">
+        <div class="launch-loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST ==================== -->
+  <div id="toastBox" class="toast-box hidden"></div>
 
   <script src="script.js"></script>
 </body>
