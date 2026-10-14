@@ -358,15 +358,22 @@ html, body {
 .brain-score-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  border-radius: 22px;
-  box-shadow: 0 12px 30px rgba(106,17,203,0.4);
+  gap: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 60%, #6a11cb 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(106,17,203,0.5),
+              inset 0 1px 0 rgba(255,255,255,0.2);
   position: relative;
   overflow: hidden;
 }
 
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
 .brain-score-card::before {
   content: '';
   position: absolute;
@@ -532,12 +539,14 @@ html, body {
 }
 
 .section-title {
-  font-size: 13px;
-  letter-spacing: 3px;
+  font-size: 12px;
+  letter-spacing: 2px;
   font-weight: 800;
-  opacity: 0.75;
-  margin-top: 6px;
+  opacity: 0.9;
+  margin-top: 10px;
   padding-left: 4px;
+  color: #ffe259;
+  text-transform: uppercase;
 }
 
 .section-title span {
@@ -547,31 +556,67 @@ html, body {
 
 .games-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .game-card {
-  padding: 22px 14px;
-  background: rgba(255,255,255,0.07);
+  padding: 16px 8px 12px;
+  background: linear-gradient(145deg, rgba(106,17,203,0.35), rgba(37,117,252,0.25));
   border: 1.5px solid rgba(255,255,255,0.14);
-  border-radius: 20px;
+  border-radius: 16px;
   cursor: pointer;
   text-align: center;
-  transition: transform 0.15s, background 0.25s, border 0.25s;
+  transition: transform 0.15s, box-shadow 0.25s, border 0.25s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffe259, transparent);
+  opacity: 0;
+  transition: opacity 0.25s;
 }
 
 .game-card:active {
-  transform: scale(0.96);
-  background: rgba(255,255,255,0.15);
+  transform: scale(0.94);
   border-color: rgba(255,226,89,0.6);
 }
 
+.game-card:active::before {
+  opacity: 1;
+}
+
+.game-icon {
+  font-size: 30px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  margin-bottom: 4px;
+}
+
+.game-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+.game-desc {
+  font-size: 9px;
+  opacity: 0.6;
+  line-height: 1.2;
+}
 .game-card.hidden {
   display: none;
 }
